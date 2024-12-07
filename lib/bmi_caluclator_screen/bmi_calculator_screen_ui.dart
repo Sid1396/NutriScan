@@ -4,8 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutriscan/app_utils/colors.dart';
+import 'package:nutriscan/app_utils/strings.dart';
 import 'package:nutriscan/app_utils/widgets.dart';
+import 'package:nutriscan/bmi_caluclator_screen/activity_screen_ui.dart';
 import 'package:nutriscan/bmi_caluclator_screen/bmi_result_screen_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BmiCalculatorScreenUi extends StatefulWidget {
   const BmiCalculatorScreenUi({super.key});
@@ -196,13 +199,21 @@ class _BmiCalculatorScreenUiState extends State<BmiCalculatorScreenUi> {
               height: 10.h,
             ),
             GestureDetector(
-                onTap: (){
+                onTap: () async {
                   if(weight==0){
                     showErrorSnackBar("Please enter weight");
                   }else if(height==0){
                     showErrorSnackBar("Please enter height");
                   }else{
-                    Get.to(BmiResultScreenUi());
+                    final SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setString(HEIGHT, height.toString());
+                    prefs.setString(WEIGHT, weight.toString());
+                    double bmi = weight / ((height / 100) * (height / 100));
+                    String bmiStatus = getBmiStatus(bmi);
+
+                    prefs.setString(BMI, height.toString());
+                    prefs.setString(WEIGHT, weight.toString());
+                    Get.to(ActivityScreenUi(),arguments: [bmi,bmiStatus]);
                   }
                 },
                 child: submitButton())
@@ -211,4 +222,19 @@ class _BmiCalculatorScreenUiState extends State<BmiCalculatorScreenUi> {
       ),
     );
   }
+
+  String getBmiStatus(double bmi) {
+    if (bmi < 18.5) {
+      return "Underweight";
+    } else if (bmi >= 18.5 && bmi <= 24.9) {
+      return "Normal weight";
+    } else if (bmi >= 25.0 && bmi <= 29.9) {
+      return "Overweight";
+    } else if (bmi >= 30.0) {
+      return "Obese";
+    } else {
+      return "Invalid BMI";
+    }
+  }
+
 }

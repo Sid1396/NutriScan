@@ -5,7 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutriscan/app_utils/colors.dart';
+import 'package:nutriscan/app_utils/strings.dart';
+import 'package:nutriscan/bmi_caluclator_screen/activity_screen_ui.dart';
+import 'package:nutriscan/home_screen/home_screen_ui.dart';
 import 'package:nutriscan/login_screen/login_screen_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreenUi extends StatefulWidget {
   const SplashScreenUi({super.key});
@@ -38,7 +42,13 @@ class _SplashScreenUiState extends State<SplashScreenUi> {
     });
 
     await Future.delayed(Duration(seconds: 4));
-    Get.to(LoginScreenUi());
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool(ISLOGGEDIN)!;
+    if(isLoggedIn){
+      Get.to(HomeScreenUi());
+    }else{
+      Get.to(LoginScreenUi());
+    }
 
   }
 

@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutriscan/app_utils/colors.dart';
+import 'package:nutriscan/app_utils/strings.dart';
 import 'package:nutriscan/app_utils/widgets.dart';
 import 'package:nutriscan/sign_up_screen/sign_up_screen_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreenUi extends StatefulWidget {
   const LoginScreenUi({super.key});
@@ -77,10 +79,12 @@ class _LoginScreenUiState extends State<LoginScreenUi> {
               height: 10.h,
             ),
             GestureDetector(
-                onTap: (){
+                onTap: () async {
                   FocusScope.of(context).requestFocus(FocusNode());
 
                   if(validateMobileNumber(_mobileNumberController.text.trim())){
+                    final SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setString(MOBILENUMBER, _mobileNumberController.text.trim());
                     Get.to(SignUpScreenUi());
                   }else{
                     showErrorSnackBar("Please write valid mobile number");

@@ -7,9 +7,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:nutriscan/app_utils/colors.dart';
+import 'package:nutriscan/app_utils/strings.dart';
 import 'package:nutriscan/app_utils/widgets.dart';
 import 'package:nutriscan/bmi_caluclator_screen/bmi_calculator_screen_ui.dart';
 import 'package:nutriscan/sign_up_screen/height_selector_screen_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreenUi extends StatefulWidget {
   const SignUpScreenUi({super.key});
@@ -162,8 +164,12 @@ class _SignUpScreenUiState extends State<SignUpScreenUi> {
               height: 10.h,
             ),
             GestureDetector(
-                onTap: (){
+                onTap: () async {
                   if(validateFields(_nameController.text.trim(),_genderController.text.trim(),_dobController.text.trim())){
+                    final SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setString(NAME, _nameController.text.trim());
+                    prefs.setString(GENDER, _genderController.text.trim());
+                    prefs.setString(DOB, _dobController.text.trim());
                     Get.to(BmiCalculatorScreenUi());
                   }
                 },
